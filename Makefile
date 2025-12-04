@@ -7,7 +7,7 @@
 export PLATFORM := Pc32
 
 # project
-export project_name := mbedtls
+export project_name := mbedtlspp
 
 # sysroot (for cross-compilation)
 # export sysroot := 
