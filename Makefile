@@ -34,6 +34,7 @@ program_names = \
 # Project libraries
 library_names = \
 mbedtls \
+mbedtlspp \
 
 # optimalization flags
 # export debug_optimalization := 

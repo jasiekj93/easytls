@@ -10,7 +10,7 @@
 # supported_platforms := Pc32 Pc64 ArmA7-Linux ArmA9-Linux Rpi64
 
 # Target
-library_name := mbedtls
+library_name := mbedtlspp
 
 # Directories
 project_dir ?= ..
@@ -18,20 +18,22 @@ make_dir := $(project_dir)/make
 external_dir := $(project_dir)/external
 
 # Sources 
-# cxx_sources :=  \
+cxx_sources :=  \
+$(wildcard mbedtlspp/*.cpp) \
+$(wildcard mbedtlspp/drbg/*.cpp) \
+$(wildcard mbedtlspp/x509/*.cpp) \
 
-c_sources := \
-$(wildcard mbedtls/*.c) \
+# c_sources := \
 
 # asm_sources := \
 
 # Includes
 cxx_includes := \
 -I. \
+-I$(project_dir)/mbedtls \
 
 # Defines
 cxx_defs := \
--DMBEDTLS_CONFIG_FILE='"mbedtls_config.h"' \
 
 # Additional objects
 # additional_objects := \
@@ -40,6 +42,7 @@ cxx_defs := \
 #	e.g. if include flag is '-I$(external_dir)/libFoo'
 #	write 'libFoo'
 export external_library_include_path = \
+etl/include \
 
 # 	for testing purpose - use only PC 32-bit version
 export external_library_flags = \
@@ -55,7 +58,7 @@ installed_include_files = \
 installed_include_directories = \
 
 # Uncomment if gcc should be used for compilation *.c files
-use_gcc_for_c_files := 1
+# use_gcc_for_c_files := 1
 
 # Uncomment if you want to add custom flags for gcc or g++
 # custom_c_flags :=
