@@ -30,6 +30,8 @@ internal_library_names = \
 
 # Project subprograms
 program_names = \
+test-server \
+test-client \
 
 # Project libraries
 library_names = \
