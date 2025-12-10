@@ -24,7 +24,7 @@ namespace mbedtlspp
         void setCaChain(x509::Crt&);
         void setOwnCert(x509::Crt&, PrivateKey&);
         void setRng(drbg::Hmac&);
-        void setCiphersuites(const int* ciphersuites);
+        void setCiphersuites(const int ciphersuites[]);
 
         inline auto& operator()() { return conf; }
 

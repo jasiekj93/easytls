@@ -173,11 +173,11 @@ int main(int argc, char* argv[])
     // std::cout << "CA certificate parsed successfully!" << std::endl;
     
     // Let's try without specifying cipher suites first
-    // static const int ciphersuites[] = {
-    //     MBEDTLS_TLS_RSA_WITH_AES_128_CBC_SHA,
-    //     0 // terminator
-    // };
-    // configuration.setCiphersuites(ciphersuites);
+    static const int ciphersuites[] = {
+        MBEDTLS_TLS_RSA_WITH_AES_256_GCM_SHA384,
+        0 // terminator
+    };
+    configuration.setCiphersuites(ciphersuites);
     
     // For initial testing, disable certificate verification completely
     configuration.setAuthMode(MBEDTLS_SSL_VERIFY_NONE);

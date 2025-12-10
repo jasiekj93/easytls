@@ -65,7 +65,7 @@ void Configuration::setRng(drbg::Hmac& drbg)
     mbedtls_ssl_conf_rng(&conf, rngWrapper, &drbg);
 }
 
-void Configuration::setCiphersuites(const int* ciphersuites)
+void Configuration::setCiphersuites(const int ciphersuites[])
 {
     mbedtls_ssl_conf_ciphersuites(&conf, ciphersuites);
 }

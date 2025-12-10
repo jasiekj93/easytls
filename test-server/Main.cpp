@@ -173,13 +173,12 @@ int main(int argc, char* argv[])
     if (not serverKey)
         throw std::runtime_error("Failed to parse server private key");
     
-    
-    // Let's try without specifying cipher suites first to see what happens
-    // static const int ciphersuites[] = {
-    //     MBEDTLS_TLS_RSA_WITH_AES_128_CBC_SHA,
-    //     0 // terminator
-    // };
-    // configuration.setCiphersuites(ciphersuites);
+    static const int ciphersuites[] = {
+        MBEDTLS_TLS_RSA_WITH_AES_256_GCM_SHA384,
+        0 // terminator
+    };
+    configuration.setCiphersuites(ciphersuites);
+
     
     configuration.setOwnCert(serverCert.value(), serverKey.value());
     configuration.setRng(drbg);
