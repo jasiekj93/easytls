@@ -16,6 +16,7 @@ namespace mbedtlspp::x509
     class Crt
     {
     public:
+        // For PEM parsing, mbedTLS expects null-terminated data WITH the null terminator in size
         static etl::optional<Crt> parse(etl::span<const unsigned char> buf);
 
         ~Crt();

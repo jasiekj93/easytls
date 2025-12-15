@@ -15,8 +15,7 @@
 #include <sys/un.h>
 #include <errno.h>
 
-#include <mbedtlspp/Ssl.hpp>
-#include <mbedtls/ssl_ciphersuites.h>
+#include <mbedtlspp/Client.hpp>
 
 #include "SocketBio.hpp"
 
@@ -34,38 +33,10 @@ std::string readFile(const std::string& filename) {
     return buffer.str();
 }
 
-
-int main(int argc, char* argv[])
+void doHandshake(Client& ssl)
 {
-    SocketBio bio("/tmp/mbedtls-test.sock", false);
-    Configuration configuration(MBEDTLS_SSL_IS_CLIENT,
-                                MBEDTLS_SSL_TRANSPORT_STREAM,
-                                MBEDTLS_SSL_PRESET_DEFAULT);
-    Entropy entropy;
-    drbg::Hmac drbg(entropy);
-
-    static std::string caCertData = readFile("test-client/ca-cert.pem");
-    
-    auto cacert = x509::Crt::parse({ reinterpret_cast<const unsigned char*>(caCertData.c_str()), caCertData.length() + 1 });
-
-    if(not cacert)
-        throw std::runtime_error("Failed to parse CA certificates");
-    
-    // static const int ciphersuites[] = {
-    //     MBEDTLS_TLS_RSA_WITH_AES_256_GCM_SHA384,
-    //     0 // terminator
-    // };
-
-    etl::vector<int, 2> ciphersuites = { MBEDTLS_TLS_RSA_WITH_AES_256_GCM_SHA384, 0 };
-    configuration.setCiphersuites(ciphersuites);
-    
-    configuration.setAuthMode(MBEDTLS_SSL_VERIFY_REQUIRED);
-    configuration.setCaChain(cacert.value());
-    configuration.setRng(drbg);    
-
-    Ssl ssl(configuration, bio);
     int ret = 0;
-    
+
     std::cout << "Starting TLS handshake over Unix socket..." << std::endl;
 
     while ((ret = ssl.handshake()) != 0) 
@@ -80,25 +51,58 @@ int main(int argc, char* argv[])
     }
     
     std::cout << "TLS handshake completed successfully!" << std::endl;
-    
+}
+
+int sendMessage(Client& ssl)
+{
     // Send encrypted data
     const char *message = "Hello from TLS over Unix socket!";
-    ret = ssl.write({ (unsigned char *)message, strlen(message) });
-
+    int ret = ssl.write({ (unsigned char *)message, strlen(message) });
     if (ret > 0) 
         std::cout << "Sent: " << message << std::endl;
     
     // Read encrypted response
     unsigned char buffer[256];
-    ret = ssl.read({ buffer, sizeof(buffer) - 1 });
 
-    if (ret > 0) 
+    while(true)
     {
-        buffer[ret] = '\0';
-        std::cout << "Received: " << buffer << std::endl;
+        ret = ssl.read({ buffer, sizeof(buffer) - 1 });
+
+        if (ret == MBEDTLS_ERR_SSL_WANT_READ) 
+        {
+            usleep(1000);
+            continue;
+        }
+
+        if (ret > 0) 
+        {
+            buffer[ret] = '\0';
+            std::cout << "Received: " << buffer << std::endl;
+            break;
+        }
+
     }
+
+    return ret;
+}
+
+
+int main(int argc, char* argv[])
+{
+    SocketBio bio("/tmp/mbedtls-test.sock", false);
+
+    auto caCertData = readFile("test-client/ca-cert.pem");
+    auto cacert = x509::Crt::parse({ reinterpret_cast<const unsigned char*>(caCertData.c_str()), caCertData.length() + 1 });
+
+    if(not cacert)
+        throw std::runtime_error("Failed to parse CA certificates");
     
+    Client ssl(bio, cacert.value());
+
+    doHandshake(ssl);
+    auto ret = sendMessage(ssl);
     ssl.closeNotify();
+
     std::cout << "TLS Connection closed." << std::endl;
     return ret;
 }

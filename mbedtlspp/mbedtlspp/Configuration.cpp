@@ -73,3 +73,15 @@ bool Configuration::setCiphersuites(const Ciphersuites& ciphersuites)
     mbedtls_ssl_conf_ciphersuites(&conf, ciphersuites.data());
     return true;
 }
+
+void Configuration::setTlsVersion(int major, int minor)
+{
+    mbedtls_ssl_conf_min_version(&conf, major, minor);
+    mbedtls_ssl_conf_max_version(&conf, major, minor);
+}
+
+void Configuration::setTlsVersionRange(int minMajor, int minMinor, int maxMajor, int maxMinor)
+{
+    mbedtls_ssl_conf_min_version(&conf, minMajor, minMinor);
+    mbedtls_ssl_conf_max_version(&conf, maxMajor, maxMinor);
+}

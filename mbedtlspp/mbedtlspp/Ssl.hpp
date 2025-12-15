@@ -17,7 +17,7 @@ namespace mbedtlspp
     {
     public:
         Ssl(Configuration&, Bio&);
-        ~Ssl();
+        virtual ~Ssl();
 
         int handshake();
         int closeNotify();
@@ -27,6 +27,12 @@ namespace mbedtlspp
 
         Ssl(Ssl&& other) noexcept;
         Ssl& operator=(Ssl&& other) noexcept;
+
+    protected:
+        Ssl() = default;
+
+        void init(Configuration&, Bio&);
+
 
     private:
         Ssl(const Ssl&) = delete;

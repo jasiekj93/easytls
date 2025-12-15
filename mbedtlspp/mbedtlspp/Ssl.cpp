@@ -8,14 +8,7 @@ static int bioReadTimeoutWrapper(void *ctx, unsigned char *buf, size_t len, uint
 
 Ssl::Ssl(Configuration& conf, Bio& bio)
 {
-    mbedtls_ssl_init(&ssl);
-    auto result = mbedtls_ssl_setup(&ssl, &conf());
-    //TODO : handle result
-
-    mbedtls_ssl_set_bio(&ssl, &bio, 
-        bioWriteWrapper, 
-        bioReadWrapper, 
-        bioReadTimeoutWrapper);
+    init(conf, bio);
 }
 
 Ssl::Ssl(Ssl&& other) noexcept
@@ -59,6 +52,18 @@ int Ssl::write(etl::span<const unsigned char> data)
 int Ssl::read(etl::span<unsigned char> buffer)
 {
     return mbedtls_ssl_read(&ssl, buffer.data(), buffer.size());
+}
+
+void Ssl::init(Configuration& conf, Bio& bio)
+{
+    mbedtls_ssl_init(&ssl);
+    auto result = mbedtls_ssl_setup(&ssl, &conf());
+    //TODO : handle result
+
+    mbedtls_ssl_set_bio(&ssl, &bio, 
+        bioWriteWrapper, 
+        bioReadWrapper, 
+        bioReadTimeoutWrapper);
 }
 
 

@@ -29,6 +29,8 @@ namespace mbedtlspp
         void setOwnCert(x509::Crt&, PrivateKey&);
         void setRng(drbg::Hmac&);
         bool setCiphersuites(const Ciphersuites&);
+        void setTlsVersion(int major, int minor);
+        void setTlsVersionRange(int minMajor, int minMinor, int maxMajor, int maxMinor);
 
         inline auto& operator()() { return conf; }
 
