@@ -12,10 +12,29 @@
 #include <unistd.h>
 
 #include <mbedtlspp/Server.hpp>
+#include <psa/crypto.h>
 
 #include "SocketBio.hpp"
 
 using namespace mbedtlspp;
+
+extern "C" int mbedtls_hardware_poll(void *data,
+                          unsigned char *output, size_t len, size_t *olen)
+{
+    // Simple hardware poll implementation using /dev/urandom
+    (void)data; // Unused parameter
+    std::ifstream urandom("/dev/urandom", std::ios::in | std::ios::binary);
+    if (!urandom) {
+        return MBEDTLS_ERR_ENTROPY_SOURCE_FAILED;
+    }
+
+    urandom.read(reinterpret_cast<char*>(output), len);
+    if (urandom.gcount() != static_cast<std::streamsize>(len)) {
+        return MBEDTLS_ERR_ENTROPY_SOURCE_FAILED;
+    }
+    *olen = len;
+    return 0;
+}
 
 std::string readFile(const std::string& filename) 
 {
@@ -82,6 +101,13 @@ int receiveData(Server& ssl)
 
 int main(int argc, char* argv[])
 {
+    // Initialize PSA crypto for TLS 1.3
+    psa_status_t psa_status = psa_crypto_init();
+    if (psa_status != PSA_SUCCESS) {
+        std::cerr << "PSA crypto initialization failed: " << psa_status << std::endl;
+        return 1;
+    }
+
     SocketBio bio("/tmp/mbedtls-test.sock", true);
     
     auto serverCertData = readFile("test-server/server-cert.pem");

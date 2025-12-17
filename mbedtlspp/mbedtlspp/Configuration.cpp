@@ -3,6 +3,9 @@
 #include <string>
 #include <iostream>
 
+#include <mbedtls/debug.h>
+#include <psa/crypto.h>
+
 using namespace mbedtlspp;
 
 static int rngWrapper(void *ctx, unsigned char *buf, size_t len)
@@ -27,6 +30,7 @@ Configuration::Configuration(int protocol, int transport, int preset)
     mbedtls_ssl_conf_dbg(&conf,
                           printDebug,
                           nullptr);
+    mbedtls_debug_set_threshold(4);
 }
 
 Configuration::Configuration(Configuration&& other) noexcept
@@ -83,6 +87,6 @@ bool Configuration::setCiphersuites(const Ciphersuites& ciphersuites)
 
 void Configuration::setVersion(Version version)
 {
-    mbedtls_ssl_conf_min_version(&conf, MBEDTLS_SSL_MAJOR_VERSION_3, static_cast<int>(version));
-    mbedtls_ssl_conf_max_version(&conf, MBEDTLS_SSL_MAJOR_VERSION_3, static_cast<int>(version));
+    mbedtls_ssl_conf_min_tls_version(&conf, static_cast<mbedtls_ssl_protocol_version>(version));
+    mbedtls_ssl_conf_max_tls_version(&conf, static_cast<mbedtls_ssl_protocol_version>(version));
 }

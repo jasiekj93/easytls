@@ -2,7 +2,7 @@
 
 using namespace mbedtlspp;
 
-const etl::vector<int, 2> Server::DEFAULT_CIPHERSUITE = { MBEDTLS_TLS_RSA_WITH_AES_256_GCM_SHA384, 0 };
+const etl::vector<int, 2> Server::DEFAULT_CIPHERSUITE = { MBEDTLS_TLS1_3_AES_256_GCM_SHA384, 0 };
 
 Server::Server(Bio& bio, x509::Crt& certificate, PrivateKey& privateKey, const Ciphersuites& ciphersuites)
     : entropy()
