@@ -15,7 +15,7 @@ Client::Client(Bio& bio, x509::Crt& certificate, const Ciphersuites& ciphersuite
     configuration.setAuthMode(MBEDTLS_SSL_VERIFY_REQUIRED);
     configuration.setCaChain(certificate);
     configuration.setRng(drbg);
-    configuration.setVersion(Configuration::Version::TLS1_2);
+    configuration.setVersion(Configuration::Version::TLS1_3);
 
     init(configuration, bio);
 }

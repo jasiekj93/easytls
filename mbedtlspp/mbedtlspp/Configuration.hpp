@@ -23,10 +23,7 @@ namespace mbedtlspp
     public:
         enum class Version
         {
-            SSL3_0    = MBEDTLS_SSL_MINOR_VERSION_0,
-            TLS1_0    = MBEDTLS_SSL_MINOR_VERSION_1,
-            TLS1_1    = MBEDTLS_SSL_MINOR_VERSION_2,
-            TLS1_2    = MBEDTLS_SSL_MINOR_VERSION_3,
+            TLS1_3    = MBEDTLS_SSL_MINOR_VERSION_4,
         };
 
         Configuration(int protocol, int transport, int preset);

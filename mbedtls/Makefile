@@ -31,7 +31,7 @@ cxx_includes := \
 
 # Defines
 cxx_defs := \
--DMBEDTLS_CONFIG_FILE='"mbedtls_config.h"' \
+# -DMBEDTLS_CONFIG_FILE='"mbedtls_config.h"' \
 
 # Additional objects
 # additional_objects := \

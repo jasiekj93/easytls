@@ -14,7 +14,7 @@ Server::Server(Bio& bio, x509::Crt& certificate, PrivateKey& privateKey, const C
     configuration.setCiphersuites(ciphersuites);
     configuration.setOwnCert(certificate, privateKey);
     configuration.setRng(drbg);
-    configuration.setVersion(Configuration::Version::TLS1_2);
+    configuration.setVersion(Configuration::Version::TLS1_3);
 
     init(configuration, bio);
 }

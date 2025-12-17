@@ -1,4 +1,5 @@
 #include "PrivateKey.hpp"
+#include "Rng.hpp"
 
 using namespace mbedtlspp;
 
@@ -10,7 +11,9 @@ etl::optional<PrivateKey> PrivateKey::parse(KeyData data, Password password)
                                      data.data(),
                                      data.size(),
                                      password.data(),
-                                     password.size());
+                                     password.size(),
+                                     Rng::rand,
+                                     nullptr);
 
     if (ret == 0)
         return etl::optional<PrivateKey>(etl::move(key));

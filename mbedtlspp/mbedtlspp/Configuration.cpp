@@ -1,6 +1,7 @@
 #include "Configuration.hpp"
 #include <stdexcept>
 #include <string>
+#include <iostream>
 
 using namespace mbedtlspp;
 
@@ -10,16 +11,22 @@ static int rngWrapper(void *ctx, unsigned char *buf, size_t len)
     return drbg->random(etl::span<unsigned char>(buf, len));
 }
 
+void printDebug(void *ctx, int level, const char *file, int line, const char *str)
+{
+    std::cout << "[" << level << "] " << file << ":" << line << ": " << str;
+}
+
 
 Configuration::Configuration(int protocol, int transport, int preset)
 {
     mbedtls_ssl_config_init(&conf);
     
-    // Load reasonable default values - this is critical!
     int ret = mbedtls_ssl_config_defaults(&conf, protocol, transport, preset);
-    if (ret != 0) {
-        throw std::runtime_error("Failed to set SSL config defaults: " + std::to_string(ret));
-    }
+    assert(ret == 0);
+
+    mbedtls_ssl_conf_dbg(&conf,
+                          printDebug,
+                          nullptr);
 }
 
 Configuration::Configuration(Configuration&& other) noexcept
