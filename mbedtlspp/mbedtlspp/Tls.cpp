@@ -66,6 +66,11 @@ void Tls::init(Configuration& conf, Bio& bio)
         bioReadTimeoutWrapper);
 }
 
+void Tls::setHostname(const char* hostname)
+{
+    mbedtls_ssl_set_hostname(&ssl, hostname);
+}
+
 
 static int bioWriteWrapper(void *ctx, const unsigned char *buf, size_t len)
 {

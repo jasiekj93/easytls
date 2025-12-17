@@ -90,3 +90,10 @@ void Configuration::setVersion(Version version)
     mbedtls_ssl_conf_min_tls_version(&conf, static_cast<mbedtls_ssl_protocol_version>(version));
     mbedtls_ssl_conf_max_tls_version(&conf, static_cast<mbedtls_ssl_protocol_version>(version));
 }
+
+void Configuration::setHostname(const char* hostname)
+{
+    // Store hostname for later use with SSL context
+    // This will be used in the SSL context when handshake starts
+    (void)hostname; // Implementation will be in SSL context setup
+}

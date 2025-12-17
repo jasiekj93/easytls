@@ -35,6 +35,7 @@ namespace mbedtlspp
         void setRng(drbg::Hmac&);
         bool setCiphersuites(const Ciphersuites&);
         void setVersion(Version);
+        void setHostname(const char* hostname);
 
         inline auto& operator()() { return conf; }
 

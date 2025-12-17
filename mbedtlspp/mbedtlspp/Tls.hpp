@@ -21,6 +21,7 @@ namespace mbedtlspp
 
         int handshake();
         int closeNotify();
+        void setHostname(const char* hostname);
 
         int write(etl::span<const unsigned char>);
         int read(etl::span<unsigned char>);
