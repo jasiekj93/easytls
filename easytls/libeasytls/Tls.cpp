@@ -26,9 +26,12 @@ Tls::Tls(Bio& bio, etl::string_view hostname)
     mbedtls_ssl_config_init(&config);
     mbedtls_hmac_drbg_init(&drbg);
 
-    mbedtls_hmac_drbg_seed(&drbg, mbedtls_md_info_from_type(MBEDTLS_MD_SHA3_512),
+    errorCode = mbedtls_hmac_drbg_seed(&drbg, mbedtls_md_info_from_type(MBEDTLS_MD_SHA3_512),
                                   Rng::rand, nullptr, 
                                   nullptr, 0);
+    
+    if(errorCode != 0)
+        return;
 
     mbedtls_ssl_set_bio(&ssl, &bio, 
         bioWriteWrapper, 
