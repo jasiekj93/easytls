@@ -87,28 +87,6 @@ int SocketBio::read(etl::span<unsigned char> buffer)
     return static_cast<int>(ret);
 }
 
-int SocketBio::read(etl::span<unsigned char> buffer, unsigned timeout)
-{
-    fd_set read_fds;
-    struct timeval tv;
-    
-    FD_ZERO(&read_fds);
-    FD_SET(socket_fd, &read_fds);
-    
-    tv.tv_sec = timeout / 1000;
-    tv.tv_usec = (timeout % 1000) * 1000;
-    
-    int ret = select(socket_fd + 1, &read_fds, nullptr, nullptr, &tv);
-    
-    if (ret > 0 && FD_ISSET(socket_fd, &read_fds)) 
-        return read(buffer);
-    else if (ret == 0) 
-        return MBEDTLS_ERR_SSL_WANT_READ; // Timeout
-    else         
-        return MBEDTLS_ERR_SSL_INTERNAL_ERROR; // Error
-    
-}
-
 int SocketBio::write(etl::span<const unsigned char> buffer)
 {
     ssize_t ret = ::write(socket_fd, buffer.data(), buffer.size());

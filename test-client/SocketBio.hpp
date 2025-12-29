@@ -15,7 +15,6 @@ public:
     ~SocketBio(); 
     
     int read(etl::span<unsigned char> buffer) override;
-    int read(etl::span<unsigned char> buffer, unsigned timeout) override;
     int write(etl::span<const unsigned char> buffer) override;
 
 private:

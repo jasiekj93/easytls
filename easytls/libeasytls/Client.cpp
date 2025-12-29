@@ -15,7 +15,7 @@ Client::Client(Bio &bio, etl::string_view hostname, x509::Certificate &certifica
         return;
 
     //TODO config
-    mbedtls_ssl_conf_read_timeout(&config, 10000); 
+    // mbedtls_ssl_conf_read_timeout(&config, 10000); 
                     
     mbedtls_ssl_conf_ca_chain(&config, &certificate(), nullptr);
     mbedtls_ssl_conf_authmode(&config, MBEDTLS_SSL_VERIFY_REQUIRED);

@@ -15,7 +15,7 @@ Server::Server(Bio &bio, etl::string_view hostname, x509::Certificate &certifica
         return;
 
     //TODO config
-    mbedtls_ssl_conf_read_timeout(&config, 10000); 
+    // mbedtls_ssl_conf_read_timeout(&config, 10000); 
 
     mbedtls_ssl_conf_own_cert(&config, &certificate(), &privateKey());
     errorCode = mbedtls_ssl_setup(&ssl, &config);
