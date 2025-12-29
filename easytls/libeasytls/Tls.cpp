@@ -9,7 +9,6 @@ using namespace easytls;
 
 static int bioWriteWrapper(void *ctx, const unsigned char *buf, size_t len);
 static int bioReadWrapper(void *ctx, unsigned char *buf, size_t len);
-static int bioReadTimeoutWrapper(void *ctx, unsigned char *buf, size_t len, uint32_t timeout);
 
 const etl::vector<int, 2> Tls::DEFAULT_CIPHERSUITE = { MBEDTLS_TLS_RSA_WITH_AES_256_GCM_SHA384, 0 };
 
@@ -36,7 +35,7 @@ Tls::Tls(Bio& bio, etl::string_view hostname)
     mbedtls_ssl_set_bio(&ssl, &bio, 
         bioWriteWrapper, 
         bioReadWrapper, 
-        bioReadTimeoutWrapper);
+        nullptr);
 
     if(errorCode = mbedtls_ssl_set_hostname(&ssl, hostname.data()), errorCode != 0)
         return;
@@ -93,10 +92,4 @@ static int bioReadWrapper(void *ctx, unsigned char *buf, size_t len)
 {
     Bio* bio = static_cast<Bio*>(ctx);
     return bio->read(etl::span<unsigned char>(buf, len));
-}
-
-static int bioReadTimeoutWrapper(void *ctx, unsigned char *buf, size_t len, uint32_t timeout)
-{
-    Bio* bio = static_cast<Bio*>(ctx);
-    return bio->read(etl::span<unsigned char>(buf, len), timeout);
 }

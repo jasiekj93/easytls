@@ -36,7 +36,6 @@ test-client \
 # Project libraries
 library_names = \
 mbedtls \
-mbedtlspp \
 easytls \
 
 # optimalization flags

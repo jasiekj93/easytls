@@ -16,7 +16,6 @@ namespace easytls
         virtual ~Bio() = default;
 
         virtual int read(etl::span<unsigned char>) = 0;
-        virtual int read(etl::span<unsigned char>, unsigned timeout) = 0;
         virtual int write(etl::span<const unsigned char>) = 0;
     };
 } 
