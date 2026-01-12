@@ -19,6 +19,32 @@
 
 #include "SocketBio.hpp"
 #include "CoutDebug.hpp"
+#include "TimeImpl.hpp"
+
+static const char certificatePem[] = 
+"-----BEGIN CERTIFICATE-----\n"
+"MIID1TCCAr2gAwIBAgIUTPYgsarQSBs48l4sOqItj/IzVL0wDQYJKoZIhvcNAQEL\n"
+"BQAwejELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcM\n"
+"DVNhbiBGcmFuY2lzY28xGjAYBgNVBAoMEVRlc3QgT3JnYW5pemF0aW9uMRAwDgYD\n"
+"VQQLDAdUZXN0IENBMRAwDgYDVQQDDAdUZXN0IENBMB4XDTI1MTIxNTExNTUwMVoX\n"
+"DTI2MTIxNTExNTUwMVowejELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3Ju\n"
+"aWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xGjAYBgNVBAoMEVRlc3QgT3JnYW5p\n"
+"emF0aW9uMRAwDgYDVQQLDAdUZXN0IENBMRAwDgYDVQQDDAdUZXN0IENBMIIBIjAN\n"
+"BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAl7toc58rhveSaFTnK6rUX0QGrMLU\n"
+"J9qM8pyMJBb+ZXkLyTfSx9K5luNNrVbKhSdR6lUXuaa0TUIOcHEG2LYNL6zHJysG\n"
+"u9sOY35G33+Fag9uz6Bl5WtmWIUTh2xTD5j1T6umAuKraDKQJzxRBNYpBP+Opvmq\n"
+"H4V99+1uu6FqLMMiO/v5gf+HNFUQqj98T7YBF33EdJPlni77p99psbLZsQMG6yZ4\n"
+"BmrJbUlfUnu7pGz24ufzmg8+/pPrZG+gIJn4vb4rkHMMyWL0q56CWIhZ067EZEbv\n"
+"nMwjXEImsdgsQCEdBYAqnpsTdbgFMcnhHPUX14MigEOD0EAOyb1YAJkzTwIDAQAB\n"
+"o1MwUTAdBgNVHQ4EFgQUWmOZIxsQ2D8aCQQXehCpkupihW8wHwYDVR0jBBgwFoAU\n"
+"WmOZIxsQ2D8aCQQXehCpkupihW8wDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0B\n"
+"AQsFAAOCAQEAC91QjcIFhjPySxyG4yd+efCAB4jYDSqBYdRlDXxk/e06rf8MVqWj\n"
+"oqMynHd7qXjzwZcdPRcXStGHPp9BZvdOqC9E9jGa7LZmQSQySSHJvJb/u/gQsb0S\n"
+"JfI+/n80lL1NIK4Mv/RaOTR/K+6fGYiUs4flQPjOkHqtqn/MXVHEMT/CH6T1mWv7\n"
+"2H8F5PPwATSYN7sqAZG5uU4Ve63PEhfRIIuCBpg4QALislgT9xUkUM1scnn32KbV\n"
+"R4YY7grLSCYMOXuDY8ZPZQJipG5jYLjAAjQdJPD3j9gajZxvljLUjfoQrCVpulcf\n"
+"FKNV2ozfBxFpRGUS+s5doD3Yh0w1Cyv+hA==\n"
+"-----END CERTIFICATE-----\n";
 
 using namespace easytls;
 
@@ -93,9 +119,18 @@ int main(int argc, char* argv[])
     SocketBio bio("/tmp/mbedtls-test.sock", false);
     auto debug = std::make_shared<CoutDebug>();
     Debug::setGlobal(debug);
+    auto time = std::make_shared<TimeImpl>();
+    Time::setGlobal(time);
 
-    auto caCertData = readFile("test-client/ca-cert.pem");
-    auto cacert = x509::Certificate::parse({ reinterpret_cast<const unsigned char*>(caCertData.c_str()), caCertData.length() + 1 });
+    // auto caCertData = readFile("test-client/ca-cert.pem");
+    // auto cacert = x509::Certificate::parse({ reinterpret_cast<const unsigned char*>(caCertData.c_str()), caCertData.length() + 1 });
+
+    auto cacert = easytls::x509::Certificate::parse(
+        etl::span<const unsigned char>(
+            reinterpret_cast<const unsigned char*>(certificatePem),
+            sizeof(certificatePem)
+        )
+    );
 
     if(not cacert)
         throw std::runtime_error("Failed to parse CA certificates. Status: " + std::to_string(x509::Certificate::getParseStatus()));
