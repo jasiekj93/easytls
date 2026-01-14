@@ -10,7 +10,7 @@ using namespace easytls;
 static int bioWriteWrapper(void *ctx, const unsigned char *buf, size_t len);
 static int bioReadWrapper(void *ctx, unsigned char *buf, size_t len);
 
-const etl::vector<int, 2> Tls::DEFAULT_CIPHERSUITE = { MBEDTLS_TLS_RSA_WITH_AES_256_GCM_SHA384, 0 };
+const etl::vector<int, 2> Tls::DEFAULT_CIPHERSUITE = { MBEDTLS_TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384, 0 };
 
 Tls::Tls(Bio& bio, etl::string_view hostname)
     : errorCode(0)
@@ -88,10 +88,24 @@ etl::string_view Tls::getHostName()
 
 static int bioWriteWrapper(void *ctx, const unsigned char *buf, size_t len)
 {
-    return static_cast<Bio*>(ctx)->write(etl::span<const unsigned char>(buf, len));
+    auto result = static_cast<Bio*>(ctx)->write(etl::span<const unsigned char>(buf, len));
+
+    if(result < 0)
+        return MBEDTLS_ERR_SSL_INTERNAL_ERROR;
+    else if (result == 0)
+        return MBEDTLS_ERR_SSL_WANT_WRITE;
+    else
+        return result;
 }
 
 static int bioReadWrapper(void *ctx, unsigned char *buf, size_t len)
 {
-    return static_cast<Bio*>(ctx)->read(etl::span<unsigned char>(buf, len));
+    auto result = static_cast<Bio*>(ctx)->read(etl::span<unsigned char>(buf, len));
+
+    if(result < 0)
+        return MBEDTLS_ERR_SSL_INTERNAL_ERROR;
+    else if (result == 0)
+        return MBEDTLS_ERR_SSL_WANT_READ;
+    else
+        return result;
 }

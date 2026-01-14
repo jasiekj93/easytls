@@ -28,9 +28,8 @@ struct tm* Time::gmtime_r(const mbedtls_time_t* tt, struct tm* buffer)
 
 extern "C" struct tm* mbedtls_platform_gmtime_r(const mbedtls_time_t* tt, struct tm* tm_buf)
 {
-    if (tt == nullptr || tm_buf == nullptr) {
+    if (tt == nullptr or tm_buf == nullptr)
         return nullptr;
-    }
 
     return Time::gmtime_r(tt, tm_buf);
 }

@@ -15,7 +15,14 @@ namespace easytls
     public:
         virtual ~Bio() = default;
 
+        /**
+         * @return int - ngetive if error, number of bytes read otherwise
+         */
         virtual int read(etl::span<unsigned char>) = 0;
+
+        /**
+         * @return int - negative if error, number of bytes written otherwise
+         */
         virtual int write(etl::span<const unsigned char>) = 0;
     };
 } 
