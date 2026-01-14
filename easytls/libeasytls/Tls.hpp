@@ -40,6 +40,8 @@ namespace easytls
 
         void setDebug(DebugLevel);
 
+        etl::string_view getHostName();
+
         inline bool isValid() const { return errorCode == 0; }
         inline auto getErrorCode() const { return errorCode; }
 

@@ -81,15 +81,17 @@ void Tls::setDebug(DebugLevel level)
     mbedtls_debug_set_threshold(static_cast<int>(level));
 }
 
+etl::string_view Tls::getHostName()
+{
+    return etl::string_view(mbedtls_ssl_get_hostname(&ssl));
+}
 
 static int bioWriteWrapper(void *ctx, const unsigned char *buf, size_t len)
 {
-    Bio* bio = static_cast<Bio*>(ctx);
-    return bio->write(etl::span<const unsigned char>(buf, len));
+    return static_cast<Bio*>(ctx)->write(etl::span<const unsigned char>(buf, len));
 }
 
 static int bioReadWrapper(void *ctx, unsigned char *buf, size_t len)
 {
-    Bio* bio = static_cast<Bio*>(ctx);
-    return bio->read(etl::span<unsigned char>(buf, len));
+    return static_cast<Bio*>(ctx)->read(etl::span<unsigned char>(buf, len));
 }
