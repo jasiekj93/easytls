@@ -17,7 +17,25 @@ namespace easytls
     class Server : public Tls
     {
     public:
-        Server(Bio&, etl::string_view hostname, x509::Certificate&, PrivateKey&);
+        /**
+         * @brief Constructor for server authentication only 
+         * 
+         * @param hostname - name of the secondary party (client) in certificate verification
+         * @param serverCert - server own certificate
+         * @param serverKey - server own private key
+         */
+        Server(Bio&, etl::string_view hostname, x509::Certificate& serverCert, PrivateKey& serverKey);
+        
+        /**
+         * @brief Constructor for bidirectional authentication (mutual TLS)
+         * 
+         * @param hostname - name of the secondary party (client) in certificate verification
+         * @param serverCert - server own certificate
+         * @param serverKey - server own private key
+         * @param caCert - CA certificate to validate client certificates
+         */
+        Server(Bio&, etl::string_view hostname, x509::Certificate& serverCert, PrivateKey& serverKey,
+               x509::Certificate& caCert);
 
         using Tls::handshake;
         using Tls::closeNotify;
